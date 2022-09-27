@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({ this.title = ''});
+  MyHomePage({this.title = ''});
 
   final String title;
 
@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var uploadOptions = UpChunkOptions()
       ..endPoint = _endPoint
       ..file = fileToUpload
-      ..onProgress = (double progress) {
+      ..onProgress = (double progress, _) {
         setState(() {
           _progress = progress.ceil();
         });
@@ -98,7 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontWeight: FontWeight.normal,
                 ),
               ),
-
             if (_uploadComplete)
               Text(
                 'Upload complete! 👋',
@@ -108,7 +107,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
             if (_errorMessage.isNotEmpty)
               Text(
                 '$_errorMessage%',

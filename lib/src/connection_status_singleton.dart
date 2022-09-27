@@ -5,7 +5,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ConnectionStatusSingleton {
   /// Creates the single instance by calling the `_internal` constructor specified below
-  static final ConnectionStatusSingleton _singleton = new ConnectionStatusSingleton._internal();
+  static final ConnectionStatusSingleton _singleton =
+      new ConnectionStatusSingleton._internal();
   ConnectionStatusSingleton._internal();
 
   /// Retrieves the singleton instance
@@ -15,7 +16,8 @@ class ConnectionStatusSingleton {
   bool hasConnection = false;
 
   /// Allows subscribing to connection changes
-  StreamController connectionChangeController = new StreamController.broadcast();
+  StreamController connectionChangeController =
+      new StreamController.broadcast();
 
   /// flutter_connectivity object
   final Connectivity _connectivity = Connectivity();
@@ -56,7 +58,7 @@ class ConnectionStatusSingleton {
       } else {
         hasConnection = false;
       }
-    } on SocketException catch(_) {
+    } on SocketException catch (_) {
       hasConnection = false;
     }
 
