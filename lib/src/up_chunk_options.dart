@@ -19,9 +19,9 @@ class UpChunkOptions {
   /// This parameter should be in multiples of 64
   int chunkSize = 5120;
 
-  /// The size in kb of the chunks to split the file into,
-  /// with the exception of the final chunk which may be smaller.
-  /// This parameter should be in multiples of 64
+  /// The starting chunk number, defaults to 0
+  /// This is useful if you want to resume an upload
+  /// and you know the chunk number that failed
   int? startChunk = 0;
 
   /// The number of times to retry any given chunk.

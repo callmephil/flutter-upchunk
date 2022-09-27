@@ -105,12 +105,11 @@ class UpChunk {
     _uploadFailed = true;
     _currentCancelToken!.cancel(Exception('Upload cancelled by the user'));
 
-    if (_onError != null)
-      _onError!(
-        'Upload cancelled by the user.',
-        _chunkCount,
-        _attemptCount,
-      );
+    _onError?.call(
+      'Upload cancelled by the user.',
+      _chunkCount,
+      _attemptCount,
+    );
   }
 
   /// It gets [file]'s mime type, if possible
@@ -131,7 +130,7 @@ class UpChunk {
       throw new Exception(
           'either endPoint or endPointResolver must be defined');
 
-    if (file == null) throw new Exception('file can' 't be null');
+    if (file == null) throw new Exception('file can\'t be null');
 
     if (chunkSize <= 0 || chunkSize % 64 != 0)
       throw new Exception(
@@ -168,7 +167,7 @@ class UpChunk {
 
       _offline = false;
 
-      if (_onOnline != null) _onOnline!();
+      _onOnline?.call();
 
       _sendChunks();
     }
@@ -176,7 +175,7 @@ class UpChunk {
     if (!hasConnection) {
       _offline = true;
 
-      if (_onOffline != null) _onOffline!();
+      _onOffline?.call();
     }
   }
 
@@ -195,11 +194,10 @@ class UpChunk {
     }
     headers.forEach((key, value) => putHeaders.putIfAbsent(key, () => value));
 
-    if (_onAttempt != null)
-      _onAttempt!(
-        _chunkCount,
-        _chunkLength,
-      );
+    _onAttempt?.call(
+      _chunkCount,
+      _chunkLength,
+    );
 
     _currentCancelToken = CancelToken();
 
@@ -207,11 +205,12 @@ class UpChunk {
     return Dio().putUri(
       _endpointValue,
       options: Options(
-          headers: putHeaders,
-          followRedirects: false,
-          validateStatus: (status) {
-            return true;
-          }),
+        headers: putHeaders,
+        followRedirects: false,
+        validateStatus: (status) {
+          return true;
+        },
+      ),
       data: _chunk,
       onSendProgress: (int sent, int total) {
         if (_onProgress != null) {
@@ -244,24 +243,22 @@ class UpChunk {
       _attemptCount = _attemptCount + 1;
       Timer(Duration(seconds: delayBeforeAttempt), () => _sendChunks());
 
-      if (_onAttemptFailure != null)
-        _onAttemptFailure!(
-          'An error occurred uploading chunk $_chunkCount. ${attempts - _attemptCount} retries left.',
-          _chunkCount,
-          attempts - _attemptCount,
-        );
+      _onAttemptFailure?.call(
+        'An error occurred uploading chunk $_chunkCount. ${attempts - _attemptCount} retries left.',
+        _chunkCount,
+        attempts - _attemptCount,
+      );
 
       return;
     }
 
     _uploadFailed = true;
 
-    if (_onError != null)
-      _onError!(
-        'An error occurred uploading chunk $_chunkCount. No more retries, stopping upload',
-        _chunkCount,
-        _attemptCount,
-      );
+    _onError?.call(
+      'An error occurred uploading chunk $_chunkCount. No more retries, stopping upload',
+      _chunkCount,
+      _attemptCount,
+    );
   }
 
   /// Manages the whole upload by calling [_getChunk] and [_sendChunk]
@@ -276,7 +273,7 @@ class UpChunk {
           _attemptCount = 0;
           _sendChunks();
         } else {
-          if (_onSuccess != null) _onSuccess!();
+          _onSuccess?.call();
         }
 
         if (_onProgress != null) {
@@ -296,12 +293,11 @@ class UpChunk {
 
         _uploadFailed = true;
 
-        if (_onError != null)
-          _onError!(
-            'Server responded with ${res.statusCode}. Stopping upload.',
-            _chunkCount,
-            _attemptCount,
-          );
+        _onError?.call(
+          'Server responded with ${res.statusCode}. Stopping upload.',
+          _chunkCount,
+          _attemptCount,
+        );
       }
     }, onError: (err) {
       if (_paused || _offline || _stopped) return;
