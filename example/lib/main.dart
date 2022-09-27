@@ -6,10 +6,12 @@ import 'package:flutter_upchunk/flutter_upchunk.dart';
 import 'package:image_picker/image_picker.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,18 +20,18 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'UpChunk Demo'),
+      home: const MyHomePage(title: 'UpChunk Demo'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({this.title = ''});
+  const MyHomePage({super.key, this.title = ''});
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -51,14 +53,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _uploadFile(File fileToUpload) {
-    _progress = 0;
-    _uploadComplete = false;
-    _errorMessage = '';
+    setState(() {
+      _progress = 0;
+      _uploadComplete = false;
+      _errorMessage = '';
+    });
 
     // Chunk upload
     var uploadOptions = UpChunkOptions()
       ..endPoint = _endPoint
       ..file = fileToUpload
+      ..headers = {
+        'content-name': fileToUpload.path.substring(
+          fileToUpload.path.lastIndexOf('/') + 1,
+        ),
+      }
       ..onProgress = (double progress, _) {
         setState(() {
           _progress = progress.ceil();
@@ -93,13 +102,13 @@ class _MyHomePageState extends State<MyHomePage> {
             if (!_uploadComplete)
               Text(
                 'Uploaded: $_progress%',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.normal,
                 ),
               ),
             if (_uploadComplete)
-              Text(
+              const Text(
                 'Upload complete! 👋',
                 style: TextStyle(
                   fontSize: 24,
@@ -110,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
             if (_errorMessage.isNotEmpty)
               Text(
                 '$_errorMessage%',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.normal,
                   color: Colors.red,
@@ -122,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _getFile,
         tooltip: 'Get File',
-        child: Icon(Icons.upload_file),
+        child: const Icon(Icons.upload_file),
       ),
     );
   }
